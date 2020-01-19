@@ -5,13 +5,14 @@ import os
 
 # function to build the customer object-field index for each object directory within the Object Engine/Objects/ directory.
 def build_object_field_indicies():
-    with open('/Users/justinfilip/Desktop/files/Python/Object Engine/Objects/customers', 'w+') as customers:
-        cust_writer = csv.writer(customers, dialect='excel')
-        folders = next(os.walk('/Users/justinfilip/Desktop/files/Python/Object Engine/Objects/'))[1]
+    # with open('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/customers.csv', 'w+') as customers:
+    #     cust_writer = csv.writer(customers, dialect='excel')
+    folders = next(os.walk('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/'))[1]
 
-        for f, directory in enumerate(folders):
-            cust_writer.writerow([directory])
-            files = os.listdir('/Users/justinfilip/Desktop/files/Python/Object Engine/Objects/' + str(directory) + '/')
+    for f, directory in enumerate(folders):
+        try:
+            files = os.listdir('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(directory) + '/')
+            customer_index_string = str(f)
             file_list = []
             file_objects = {}
             field_index = {}
@@ -22,21 +23,68 @@ def build_object_field_indicies():
                 else:
                     continue
 
-            with open('/Users/justinfilip/Desktop/files/Python/Object Engine/Objects/' + str(directory) + '/cofi', 'w+') as cofi:
+            customer_guid_zeros = ""
+            for i in range(31 - len(customer_index_string)):
+                customer_guid_zeros += "0"
+
+            # cust_writer.writerow(["C" + customer_index_string + customer_guid_zeros, directory])
+
+            with open('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/cofi.csv', 'w+') as cofi:
                 cofi_writer = csv.writer(cofi, dialect='excel')
 
                 for object_index, object_item in enumerate(file_list):
 
-                    with open('/Users/justinfilip/Desktop/files/Python/Object Engine/Objects/' + str(directory) + '/' + str(file_list[object_index]), 'r') as cofi_target:
+                    with open('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(directory) + '/' + str(file_list[object_index]), 'r') as cofi_target:
                         cofi_reader = csv.reader(cofi_target)
                         field_items = list(next(cofi_reader))
                         cofi_target.seek(0)
                         available_fields = {}
 
                         for cofi_field_index, cofi_field_content in enumerate(field_items):
-                            cofi_row = [object_index, object_item, cofi_field_index, cofi_field_content]
+                            object_index_string = str(object_index)
+                            field_index_string = str(cofi_field_index)
+
+                            object_index_zeros = ""
+                            for i in range(30 - len(customer_index_string + object_index_string)):
+                                object_index_zeros += "0"    
+
+                            field_index_zeros = ""
+                            for i in range(30 - len(customer_index_string + object_index_string + field_index_string)):   
+                                field_index_zeros += "0"
+
+                            cofi_row = [
+
+                            #build customer guid
+                            customer_index_string, 
+
+                            directory, 
+
+                            #build object guid
+                            object_index_string, 
+
+                            object_item, 
+
+                            #build field guid
+                            field_index_string, 
+                            
+                            cofi_field_content,
+
+                            #build customer guid
+                            "C" + customer_index_string + customer_guid_zeros, 
+
+                            #build object guid
+                            "OI" + customer_index_string + object_index_string + object_index_zeros,  
+
+                            #build field guid
+                            "FI" + customer_index_string + object_index_string + field_index_zeros + field_index_string, 
+
+                            ]
+
                             cofi_writer.writerow(cofi_row)
                             file_objects.update({object_index:object_item})
                             available_fields.update({cofi_field_index:cofi_field_content})
+
+        except Exception as e:
+            break
 
 build_object_field_indicies()
