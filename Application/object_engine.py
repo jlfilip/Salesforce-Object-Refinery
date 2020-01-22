@@ -130,18 +130,80 @@ def object_engine_main():
 # METHOD 1      # BEGINNING OF KEYWORD RANKING AGAINST SELECTED FIELD
                 #
                 elif int(param_field[1]) == 1:
-                    #insert code for keyword ranking
-                    pass
+                    # EDIT 2.0 Begin processing batch matching string or regex against selected target fields
+
+                    # EDIT for each index, object in target_objects
+                    for to_index, to_object in target_objects.items():
+
+                        with open('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(param_field[6]) + '/' + str(to_object), 'r') as engaged_object, open('/Users/justinfilip/Documents/GitHub/Object_Engine/Search Results/' + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+") as results:
+                            object_reader = csv.reader(engaged_object)
+                            results_writer = csv.writer(results, dialect='excel')
+                            row_data = {}
+
+                            for n, row in enumerate(engaged_object):
+
+                                if n > 0:
+                                    row_fields = list(next(object_reader))
+
+                                    for rf_index, rf_content in enumerate(row_fields):
+                                        rf_content_stripped = re.split(r'\W|\d', rf_content)
+                                        rf_content_strung = ' '.join(rf_content_stripped)
+                                        rf_content_remnlc = rf_content_strung.replace('(\n|,)', '')
+                                        rf_content_cleaned = rf_content_remnlc.replace('  ', ' ')
+                                        row_data.update({rf_index:rf_content_cleaned})
+
+                                        for entity, field_parameter in field_parameters.items():
+            
+                                            if (int(rf_index) == int(field_parameter)):
+
+                                                # EDIT if the selected field contains the search criteria from the parameters file
+                                                
+                                                # INSTEAD OF MATCHING STRING / REGEX, GET COUNT OF EACH WORD IN CELL, REPORT TOP 5 PER RECORD
+                                                # NEED TO TOKENIZE WORDS (NLTK)
+                                                # COMPARE KEYWORD RANKING TO KEYWORD RANKING FROM SOULTION NOTES
+                                                
+                                                if re.match('.*' + param_field[5] + '.*', rf_content_cleaned):
+                                                    result_list = []
+
+                                                    # EDIT write the selected return field to the search results file
+                                                    for x, rp in return_parameters.items():
+
+                                                        if rp == field_parameter:
+                                                            result_list.append(row_data[rf_index])
+
+                                                        else:
+                                                            try:
+                                                                result_list.append(row_fields[int(rp)])
+                                                            except Exception as e:
+                                                                continue
+
+                                                    results_writer.writerow(result_list)
+
+                                                else:
+                                                    pass
+                                            else:
+                                                continue
+                                else:
+                                    row_fields = row.rstrip().split(',')
+                                    first_row = []
+
+                                    for ri, r in return_parameters.items():
+                                        field_name = str(row_fields[int(r)]).replace('"', '')
+                                        first_row.append(field_name)
+
+                                    results_writer.writerow(first_row)
 
                 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -       
 # METHOD 2      # BEGINNING OF SENTIMENT ANALYSIS AGAINST SELECTED FIELD
                 #
                 elif int(param_field[1]) == 2:
-                    #insert code for keyword ranking
+                    # TOKENIZE EACH SENTENCE - POSITIVE / NEGATIVE - OVERALL CASE / MESSAGE SENTIMENT
+                    # TOKENIZE EACH WORD - POSITIVE / NEGATIVE - OVERALL CASE / MESSAGE SENTIMENT
+                    # SEE WHICH OF THE ABOVE IS MORE ACCURATE 
                     pass
 
                 else:
-                    pass #no valid method selection
+                    pass
 
         except Exception as e:
 
