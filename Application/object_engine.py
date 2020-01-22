@@ -19,7 +19,7 @@ def object_engine_main():
 
                 else:
                     # convert the selected objects in the parameters record (values) from the dictionary to a list
-                    object_parameters = param_field[1].split("#")
+                    object_parameters = param_field[2].split("#")
 
                     for object_string_index, object_string in enumerate(object_parameters):
                         object_parameters[object_string_index] = object_string.strip()
@@ -69,7 +69,7 @@ def object_engine_main():
                 #
                 if int(param_field[1]) == 0:
                     # 2.0 Begin processing batch matching string or regex against selected target fields
-                    
+
                     # for each index, object in target_objects
                     for to_index, to_object in target_objects.items():
 
@@ -131,12 +131,14 @@ def object_engine_main():
                 #
                 elif int(param_field[1]) == 1:
                     #insert code for keyword ranking
+                    pass
 
                 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -       
 # METHOD 2      # BEGINNING OF SENTIMENT ANALYSIS AGAINST SELECTED FIELD
                 #
                 elif int(param_field[1]) == 2:
                     #insert code for keyword ranking
+                    pass
 
                 else:
                     pass #no valid method selection
