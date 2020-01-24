@@ -2,6 +2,8 @@ import csv
 import re
 import os
 from datetime import datetime
+from collections import Counter
+from nltk.tokenize import sent_tokenize, word_tokenize
 
 # 0.0 Open the parameters.csv, log.csv, and results.csv files, then get a list of available field names from the parameters file and create a dictionary containing the index and value of each field for every row in the file.
 def object_engine_main():
@@ -129,10 +131,10 @@ def object_engine_main():
                 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -       
 # METHOD 1      # BEGINNING OF KEYWORD RANKING AGAINST SELECTED FIELD
                 #
-                elif int(param_field[1]) == 1:
-                    # EDIT 2.0 Begin processing batch matching string or regex against selected target fields
+                if int(param_field[1]) == 1:
+                    # 2.0 Begin processing batch matching string or regex against selected target fields
 
-                    # EDIT for each index, object in target_objects
+                    # for each index, object in target_objects
                     for to_index, to_object in target_objects.items():
 
                         with open('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(param_field[6]) + '/' + str(to_object), 'r') as engaged_object, open('/Users/justinfilip/Documents/GitHub/Object_Engine/Search Results/' + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+") as results:
@@ -156,31 +158,34 @@ def object_engine_main():
             
                                             if (int(rf_index) == int(field_parameter)):
 
-                                                # EDIT if the selected field contains the search criteria from the parameters file
-                                                
-                                                # INSTEAD OF MATCHING STRING / REGEX, GET COUNT OF EACH WORD IN CELL, REPORT TOP 5 PER RECORD
-                                                # NEED TO TOKENIZE WORDS (NLTK)
-                                                # COMPARE KEYWORD RANKING TO KEYWORD RANKING FROM SOULTION NOTES
-                                                
-                                                if re.match('.*' + param_field[5] + '.*', rf_content_cleaned):
-                                                    result_list = []
+                                                result_list = []
 
-                                                    # EDIT write the selected return field to the search results file
-                                                    for x, rp in return_parameters.items():
+                                                # write the selected return field to the search results file
+                                                for x, rp in return_parameters.items():
 
-                                                        if rp == field_parameter:
-                                                            result_list.append(row_data[rf_index])
+                                                    if rp == field_parameter:
 
-                                                        else:
-                                                            try:
-                                                                result_list.append(row_fields[int(rp)])
-                                                            except Exception as e:
-                                                                continue
+                                                        try:
 
-                                                    results_writer.writerow(result_list)
+                                                            tokenized_field = word_tokenize(rf_content_cleaned)
 
-                                                else:
-                                                    pass
+                                                            counts = Counter(tokenized_field).most_common(5)
+                                                            
+
+                                                        except Exception as e:
+                                                            print(e)
+
+
+                                                        result_list.append(counts)
+
+                                                    else:
+                                                        try:
+                                                            result_list.append(row_fields[int(rp)])
+                                                        except Exception as e:
+                                                            continue
+
+                                                results_writer.writerow(result_list)
+
                                             else:
                                                 continue
                                 else:
@@ -192,6 +197,7 @@ def object_engine_main():
                                         first_row.append(field_name)
 
                                     results_writer.writerow(first_row)
+
 
                 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -       
 # METHOD 2      # BEGINNING OF SENTIMENT ANALYSIS AGAINST SELECTED FIELD
@@ -216,3 +222,4 @@ def object_engine_main():
 # Functions:
 #
 object_engine_main() #Execute selected method in parameters record against the selected field
+
