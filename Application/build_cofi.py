@@ -20,6 +20,8 @@ def build_object_field_indicies():
             for file in files:
                 if file.endswith(".csv"):
                     file_list.append(file)
+                elif file.endswith(".xml"):
+                    file_list.append(file)
                 else:
                     continue
 
@@ -40,49 +42,58 @@ def build_object_field_indicies():
                         cofi_target.seek(0)
                         available_fields = {}
 
-                        for cofi_field_index, cofi_field_content in enumerate(field_items):
-                            object_index_string = str(object_index)
-                            field_index_string = str(cofi_field_index)
+                        if object_item.endswith(".csv"):
 
-                            object_index_zeros = ""
-                            for i in range(30 - len(customer_index_string + object_index_string)):
-                                object_index_zeros += "0"    
+                            for cofi_field_index, cofi_field_content in enumerate(field_items):
+                                object_index_string = str(object_index)
+                                field_index_string = str(cofi_field_index)
 
-                            field_index_zeros = ""
-                            for i in range(30 - len(customer_index_string + object_index_string + field_index_string)):   
-                                field_index_zeros += "0"
+                                object_index_zeros = ""
+                                for i in range(30 - len(customer_index_string + object_index_string)):
+                                    object_index_zeros += "0"    
 
-                            cofi_row = [
+                                field_index_zeros = ""
+                                for i in range(30 - len(customer_index_string + object_index_string + field_index_string)):   
+                                    field_index_zeros += "0"
 
-                            #build customer guid
-                            customer_index_string, 
+                                cofi_row = [
 
-                            directory, 
+                                #build customer guid
+                                customer_index_string, 
 
-                            #build object guid
-                            object_index_string, 
+                                directory, 
 
-                            object_item, 
+                                #build object guid
+                                object_index_string, 
 
-                            #build field guid
-                            field_index_string, 
-                            
-                            cofi_field_content,
+                                object_item, 
 
-                            #build customer guid
-                            "C" + customer_index_string + customer_guid_zeros, 
+                                #build field guid
+                                field_index_string, 
+                                
+                                cofi_field_content,
 
-                            #build object guid
-                            "OI" + customer_index_string + object_index_string + object_index_zeros,  
+                                #build customer guid
+                                "C" + customer_index_string + customer_guid_zeros, 
 
-                            #build field guid
-                            "FI" + customer_index_string + object_index_string + field_index_zeros + field_index_string, 
+                                #build object guid
+                                "OI" + customer_index_string + object_index_string + object_index_zeros,  
 
-                            ]
+                                #build field guid
+                                "FI" + customer_index_string + object_index_string + field_index_zeros + field_index_string, 
 
-                            cofi_writer.writerow(cofi_row)
-                            file_objects.update({object_index:object_item})
-                            available_fields.update({cofi_field_index:cofi_field_content})
+                                ]
+
+                                cofi_writer.writerow(cofi_row)
+                                file_objects.update({object_index:object_item})
+                                available_fields.update({cofi_field_index:cofi_field_content})
+
+                        elif object_item.enswith(".xml"):
+                            #parse xml and assign indecies to fields 
+                            pass
+
+                        else:
+                            pass
 
         except Exception as e:
             break
