@@ -90,7 +90,7 @@ def build_object_field_indicies():
 
                         elif object_item.enswith(".xml"):
                             #parse xml and assign indecies to fields 
-                            pass
+                            print(object_item)
 
                         else:
                             pass

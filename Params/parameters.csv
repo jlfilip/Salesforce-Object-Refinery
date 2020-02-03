@@ -1,2 +1,3 @@
 batch_id,selected_method,selected_objects,selected_field,return_fields,search_criteria,customer
 #1,1,0,2,0|2,model,Customer Care
+#2,1,1,2,0,model,Customer Care

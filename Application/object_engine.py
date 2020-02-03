@@ -211,7 +211,7 @@ def object_engine_main():
                                         results_writer.writerow(first_row)
 
                             elif to_object.endswith(".xml"):
-                                pass
+                                print(to_object)
 
                             else:
                                 pass
