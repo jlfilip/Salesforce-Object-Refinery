@@ -1,4 +1,6 @@
 import csv
+import re
+import xml.etree.ElementTree as ET
 import os
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -29,20 +31,20 @@ def build_object_field_indicies():
             for i in range(31 - len(customer_index_string)):
                 customer_guid_zeros += "0"
 
-            # cust_writer.writerow(["C" + customer_index_string + customer_guid_zeros, directory])
-
             with open('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/cofi.csv', 'w+') as cofi:
                 cofi_writer = csv.writer(cofi, dialect='excel')
 
                 for object_index, object_item in enumerate(file_list):
 
-                    with open('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(directory) + '/' + str(file_list[object_index]), 'r') as cofi_target:
-                        cofi_reader = csv.reader(cofi_target)
-                        field_items = list(next(cofi_reader))
-                        cofi_target.seek(0)
-                        available_fields = {}
+                    if object_item.endswith(".csv"):
 
-                        if object_item.endswith(".csv"):
+                        with open('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(directory) + '/' + str(file_list[object_index]), 'r') as cofi_target:
+                            cofi_reader = csv.reader(cofi_target)
+                            field_items = list(next(cofi_reader))
+                            cofi_target.seek(0)
+                            available_fields = {}
+
+                            # if object_item.endswith(".csv"):
 
                             for cofi_field_index, cofi_field_content in enumerate(field_items):
                                 object_index_string = str(object_index)
@@ -88,12 +90,31 @@ def build_object_field_indicies():
                                 file_objects.update({object_index:object_item})
                                 available_fields.update({cofi_field_index:cofi_field_content})
 
-                        elif object_item.enswith(".xml"):
-                            #parse xml and assign indecies to fields 
-                            print(object_item)
+                    elif object_item.endswith(".xml"):
+                        #parse xml and assign indecies to fields 
 
-                        else:
+                        tree = ET.parse('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(directory) + '/' + str(file_list[object_index]))
+                        root = tree.getroot()
+
+                        list_of_matches = [item.tag for item in root[1]]
+                        list_of_fields = []
+
+                        for match in list_of_matches:
+                            list_of_fields.append(re.match("(}\K\w+)", str(match)).group(2))
+
+                        print(list_of_fields)
+
+                        for child in root: 
+                            # print(child[2].text)
+
+                            # child_content_stripped = re.split(r'\W|\d', child[3].text)
+                            # child_content_strung = ' '.join(child_content_stripped)
+
+                            # print(child[2].tag)
                             pass
+
+                    else:
+                        pass
 
         except Exception as e:
             break
