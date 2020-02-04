@@ -47,6 +47,9 @@ def build_object_field_indicies():
                             # if object_item.endswith(".csv"):
 
                             for cofi_field_index, cofi_field_content in enumerate(field_items):
+
+                                #if cofi field content is blank then skip else :
+
                                 object_index_string = str(object_index)
                                 field_index_string = str(cofi_field_index)
 
@@ -96,22 +99,64 @@ def build_object_field_indicies():
                         tree = ET.parse('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(directory) + '/' + str(file_list[object_index]))
                         root = tree.getroot()
 
-                        list_of_matches = [item.tag for item in root[1]]
-                        list_of_fields = []
+                        entities = {}
 
-                        for match in list_of_matches:
-                            list_of_fields.append(re.match("(}\K\w+)", str(match)).group(2))
+                        for i, item in enumerate(root[1]):
 
-                        print(list_of_fields)
+                            # get the tag
+                            entity = item.tag[48:len(item.tag)]
 
-                        for child in root: 
-                            # print(child[2].text)
+                            # get the text for the tag
+                            value = item.text
 
-                            # child_content_stripped = re.split(r'\W|\d', child[3].text)
-                            # child_content_strung = ' '.join(child_content_stripped)
+                            entities.update({i:entity})
 
-                            # print(child[2].tag)
-                            pass
+                        print(entities)
+
+                            # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+                        for ent, item in entities.items():
+
+                            object_index_string = str(object_index)
+                            field_index_string = str(ent)
+
+                            object_index_zeros = ""
+                            for i in range(30 - len(customer_index_string + object_index_string)):
+                                object_index_zeros += "0"    
+
+                            field_index_zeros = ""
+                            for i in range(30 - len(customer_index_string + object_index_string + field_index_string)):   
+                                field_index_zeros += "0"
+
+                            cofi_row = [
+
+                            #build customer guid
+                            customer_index_string, 
+
+                            directory, 
+
+                            #build object guid
+                            object_index_string, 
+
+                            object_item, 
+
+                            #build field guid
+                            field_index_string, 
+                            
+                            item,
+
+                            #build customer guid
+                            "C" + customer_index_string + customer_guid_zeros, 
+
+                            #build object guid
+                            "OI" + customer_index_string + object_index_string + object_index_zeros,  
+
+                            #build field guid
+                            "FI" + customer_index_string + object_index_string + field_index_zeros + field_index_string, 
+
+                            ]
+
+                            cofi_writer.writerow(cofi_row)
 
                     else:
                         pass
