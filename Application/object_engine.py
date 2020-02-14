@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 from collections import Counter
 from nltk.tokenize import sent_tokenize, word_tokenize
+import xml.etree.ElementTree as ET
 
 # 0.0 Open the parameters.csv, log.csv, and results.csv files, then get a list of available field names from the parameters file and create a dictionary containing the index and value of each field for every row in the file.
 def object_engine_main():
@@ -33,12 +34,12 @@ def object_engine_main():
                 file_objects = {}
 
                 for file in files:
-                    if file.endswith(".csv"):
+                    if file.endswith(".csv") or file.endswith(".xml") or file.endswith(".tsv") or file.endswith(".txt"):
                         file_list.append(file)
                         objects.append(file[-4])
-
                     else:
                         continue
+                    
 
                 for object_index, object_item in enumerate(file_list):
                     file_objects.update({object_index:object_item})
@@ -66,6 +67,221 @@ def object_engine_main():
                     field_parameters[fp_index] = fp_value.strip()
 
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -       
+
+
+
+
+                # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -       
+# Exclusion METHOD      # BEGINNING OF STRING / REGEX SEARCH FUNCTION AGAINST SELECTED FIELD
+                #
+                if int(param_field[1]) == 9:
+                    # 2.0 Begin processing batch matching string or regex against selected target fields
+
+                    # for each index, object in target_objects
+                    for to_index, to_object in target_objects.items():
+                        if to_object.endswith(".csv"):
+
+                            with open('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(param_field[6]) + '/' + str(to_object), 'r', encoding='UTF-8') as engaged_object, open('/Users/justinfilip/Documents/GitHub/Object_Engine/Search Results/' + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
+                                filtered_object = (line.replace('\n' or '\r', '') for line in engaged_object)
+                                object_reader = csv.reader(filtered_object, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+                                results_writer = csv.writer(results, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"')
+                                row_data = {}
+
+                                # if to_object.endswith(".csv"):
+
+                                for n, row in enumerate(engaged_object):
+
+                                    if n > 0:
+                                        row_fields = list(next(object_reader))
+
+                                        for rf_index, rf_content in enumerate(row_fields):
+                                            rf_content_stripped = re.split(r'\W|\d', rf_content)
+                                            rf_content_strung = ' '.join(rf_content_stripped)
+                                            rf_content_remnlc = rf_content_strung.replace('(\n|,)', '')
+                                            rf_content_cleaned = rf_content_remnlc.replace('  ', ' ')
+                                            row_data.update({rf_index:rf_content_cleaned})
+
+                                            for entity, field_parameter in field_parameters.items():
+                
+                                                if (int(rf_index) == int(field_parameter)):
+
+                                                    # if the selected field contains the search criteria from the parameters file
+                                                    if re.match('.*' + param_field[5] + '.*', rf_content_cleaned):
+                                                        pass
+
+                                                    else:
+                                                        result_list = []
+
+                                                        # write the selected return field to the search results file
+                                                        for x, rp in return_parameters.items():
+
+                                                            if rp == field_parameter:
+                                                                result_list.append(row_data[rf_index])
+
+                                                            else:
+                                                                try:
+                                                                    result_list.append(row_fields[int(rp)])
+                                                                except Exception as e:
+                                                                    continue
+
+                                                        results_writer.writerow(result_list)
+                                                else:
+                                                    continue
+                                    else:
+                                        row_fields = row.rstrip().split(',')
+                                        first_row = []
+
+                                        for ri, r in return_parameters.items():
+                                            field_name = str(row_fields[int(r)]).replace('"', '')
+                                            first_row.append(field_name)
+
+                                        results_writer.writerow(first_row)
+
+                        elif to_object.endswith(".xml"):
+                            #parse xml and assign indecies to fields 
+
+                            tree = ET.parse('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(param_field[6]) + '/' + str(to_object))
+                            root = tree.getroot()
+
+                            for count in range(len(root)):
+                                for i, item in enumerate(root[count]):
+                                    for entity, field_parameter in field_parameters.items():
+                                        if (i == int(field_parameter)):
+                                            # if re.match('.*' + param_field[5] + '.*', rf_content_cleaned):
+                                            entities = {}
+
+                                            # get the tag
+                                            entity = item.tag[48:len(item.tag)]
+
+                                            # get the text for the tag
+                                            value = item.text
+
+                                            entities.update({i:entity})
+
+                                            print(value)
+
+                                            # finish processing and writing to file
+                                        else:
+                                            pass
+
+                            # print(entities)
+
+                    
+                        
+                        elif to_object.endswith(('.tsv', '.txt')):
+
+                            with open('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(param_field[6]) + '/' + str(to_object), 'r', encoding='UTF-8') as engaged_object, open('/Users/justinfilip/Documents/GitHub/Object_Engine/Search Results/' + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
+                                
+                                object_reader = csv.reader(engaged_object, delimiter='\t')
+                                results_writer = csv.writer(results, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"')
+
+                                for row in object_reader:
+                                    row_data = {}
+                                    for f_num, field in enumerate(row):
+
+                                        row_data.update({f_num:field})
+                                        result_list = []
+
+                                        for entity, field_parameter in field_parameters.items():
+                                            
+                                            if (f_num == int(field_parameter)):
+
+                                                if re.match('.*' + param_field[5] + '.*', field):
+                                                        continue
+                                                else:
+                                                        try:
+                                                            results_writer.writerow(row)
+                                                        except Exception as e:
+                                                            continue
+
+                                                   
+                                            else:
+
+                                                continue
+
+                        else:
+                            pass 
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -       
+
+
+
+                # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -       
+# FUNCTION FREQUENCY OF USE ( FULL MODEL LOAD FILE )
+                #
+
+                function_list = ["ABS","ADDMONTHS","ADDYEARS","AGENTS","AGENTSB","(x\[ALL:y\]|.+\[ALL:)","AND","ANSWERTIME","(x\[ANY:y\]|.+\[ANY:)","ARRIVALRATE","(x\[AVERAGE:y\]|.+\[AVERAGE:)","AVGDURATION","AVGWAIT",
+                "BLANK","CODE","COLLECT","COMPARE","COUPDAYS","COUPDAYSBS","COUPDAYSNC","COUPNCD","COUPNUM","COUPPCD","CUMIPMT","CUMPRINC","CUMULATE","CURRENTPERIODEND","CURRENTPERIODSTART","CURRENTVERSION","DATE","DAY",
+                "DAYS","DAYSINMONTH","DAYSINYEAR","DECUMULATE","DIVIDE","DURATION","END","ERLANG-B","ERLANG-C","EXP","FIND","FINDITEM","FIRSTNONBLANK","FIRSTNONZERO","FV","HALFYEARTODATE","HALFYEARVALUE","IF ISNOTBLANK",
+                "IF ISBLANK","IF AND","IF NOT","IF OR","IF THEN ELSE","INPERIOD","IPMT","IRR","ISACTUALVERSION","ISANCESTOR","ISBLANK","ISCURRENTVERSION","ISFIRSTOCCURRENCE","ISNOTBLANK","ITEM","LAG","LASTNONBLANK","LEAD",
+                "LEFT","LEN","LENGTH","LN","LOG","LOOKUP","LOWER","MAILTO","MAKELINK","MAX","(x\[MIN:y\]|.+\[MIN:)","MDURATION","MID","MIN","(x\[MIN:y\]|.+\[MIN:)","MOD","MONTH","MONTHTODATE","MONTHVALUE","MOVINGSUM",
+                "MROUND","NAME","NEXT","NEXTVERSION","NOT","NPER","NPV","OFFSET","OR","PARENT","PERIOD","PMT","POST","POWER","PPMT","PREVIOUS","PREVIOUSVERSION","PRICE","PROFILE","PV","QUARTERTODATE","QUARTERVALUE",
+                "RANK","RANKCUMULATE","RATE","RIGHT","ROUND","SELECT","(SELECT.+LOOKUP|LOOKUP.+SELECT)","SIGN","SLA","SPREAD","SQRT","START","SUBSTITUTE","SUM","(SUM.+LOOKUP|LOOKUP.+SUM)","(SUM.+SELECT|SELECT.+SUM)",
+                "TEXT","TEXTLIST","TIMESUM","TRIM","UPPER","VALUE","WEEKDAY","WEEKTODATE","WEEKVALUE","YEAR","YEARFRAC","YEARTODATE","YEARVALUE","YIELD"]
+
+                function_count = {}
+                for function_item in function_list:
+                    function_count.update({function_item:0})
+
+                if int(param_field[1]) == 10:
+                    # 2.0 Begin processing batch matching string or regex against selected target fields
+
+                    # for each index, object in target_objects
+                    for to_index, to_object in target_objects.items():
+                        print("object index: " + str(to_index))
+                        
+                        if to_object.endswith(('.tsv', '.txt')):
+
+                            with open('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(param_field[6]) + '/' + str(to_object), 'r', encoding='UTF-8') as engaged_object, open('/Users/justinfilip/Documents/GitHub/Object_Engine/Search Results/' + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
+                                
+                                object_reader = csv.reader(engaged_object, delimiter='\t')
+                                results_writer = csv.writer(results, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"')
+
+                                for row in object_reader:
+                                    for f_num, field in enumerate(row):
+                                        for entity, field_parameter in field_parameters.items():
+                                            if (f_num == int(field_parameter)):
+                                                for function_item in function_list:
+                                                    if re.match('.*' + function_item + '.*', field):
+
+                                                        function_count.update({function_item:(function_count[function_item] + 1)})
+                                                        continue
+
+                                                    else:
+                                                        continue
+                                            else:
+                                                continue
+
+                            # print(entities)
+
+                        else:
+                            pass 
+                
+                print(function_count)
+                
+
+                for key, value in function_count.items():
+                    fc_row = []
+                    fc_row.append(key, value)
+                    results_writer.writerow(fc_row)
+
+
+
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -       
+
+
+
+
+
+
+
                 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -       
 # METHOD 0      # BEGINNING OF STRING / REGEX SEARCH FUNCTION AGAINST SELECTED FIELD
                 #
@@ -74,14 +290,15 @@ def object_engine_main():
 
                     # for each index, object in target_objects
                     for to_index, to_object in target_objects.items():
+                        if to_object.endswith(".csv"):
 
-                        with open('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(param_field[6]) + '/' + str(to_object), 'r', encoding='UTF-8') as engaged_object, open('/Users/justinfilip/Documents/GitHub/Object_Engine/Search Results/' + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
-                            filtered_object = (line.replace('\n' or '\r', '') for line in engaged_object)
-                            object_reader = csv.reader(filtered_object, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
-                            results_writer = csv.writer(results, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"')
-                            row_data = {}
+                            with open('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(param_field[6]) + '/' + str(to_object), 'r', encoding='UTF-8') as engaged_object, open('/Users/justinfilip/Documents/GitHub/Object_Engine/Search Results/' + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
+                                filtered_object = (line.replace('\n' or '\r', '') for line in engaged_object)
+                                object_reader = csv.reader(filtered_object, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+                                results_writer = csv.writer(results, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"')
+                                row_data = {}
 
-                            if to_object.endswith(".csv"):
+                                # if to_object.endswith(".csv"):
 
                                 for n, row in enumerate(engaged_object):
 
@@ -131,11 +348,35 @@ def object_engine_main():
 
                                         results_writer.writerow(first_row)
 
-                            elif to_object.endswith(".xml"):
-                                pass
+                        elif to_object.endswith(".xml"):
+                            #parse xml and assign indecies to fields 
 
-                            else:
-                                pass 
+                            tree = ET.parse('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(param_field[6]) + '/' + str(to_object))
+                            root = tree.getroot()
+
+                            for count in range(len(root)):
+                                for i, item in enumerate(root[count]):
+                                    for entity, field_parameter in field_parameters.items():
+                                        if (i == int(field_parameter)):
+                                            # if re.match('.*' + param_field[5] + '.*', rf_content_cleaned):
+                                            entities = {}
+
+                                            # get the tag
+                                            entity = item.tag[48:len(item.tag)]
+
+                                            # get the text for the tag
+                                            value = item.text
+
+                                            entities.update({i:entity})
+
+                                            print(value)
+                                        else:
+                                            pass
+
+                            # print(entities)
+
+                        else:
+                            pass 
 
                 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -       
 # METHOD 1      # BEGINNING OF KEYWORD RANKING AGAINST SELECTED FIELD - verified but not using filtered Named Entities yet
@@ -182,6 +423,8 @@ def object_engine_main():
                                                                 tokenized_field = word_tokenize(rf_content_cleaned)
 
                                                                 counts = Counter(tokenized_field).most_common(5)
+
+                                                                # tokenized but won't print?
                                                                 
 
                                                             except Exception as e:
@@ -211,7 +454,31 @@ def object_engine_main():
                                         results_writer.writerow(first_row)
 
                             elif to_object.endswith(".xml"):
-                                print(to_object)
+                                #parse xml and assign indecies to fields 
+
+                                tree = ET.parse('/Users/justinfilip/Documents/GitHub/Object_Engine/Objects/' + str(param_field[6]) + '/' + str(to_object))
+                                root = tree.getroot()
+
+                                for count in range(len(root)):
+                                    for i, item in enumerate(root[count]):
+                                        for entity, field_parameter in field_parameters.items():
+                                            if (i == int(field_parameter)):
+                                                # if re.match('.*' + param_field[5] + '.*', rf_content_cleaned):
+                                                entities = {}
+
+                                                # get the tag
+                                                entity = item.tag[48:len(item.tag)]
+
+                                                # get the text for the tag
+                                                value = item.text
+
+                                                entities.update({i:entity})
+
+                                                print(value)
+                                            else:
+                                                pass
+
+                            # print(entities)
 
                             else:
                                 pass
