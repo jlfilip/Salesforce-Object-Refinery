@@ -289,56 +289,5 @@ def object_engine_main():
             else:
                 pass
 
-
-    # Method 2:
-    # Count the frequency of function use within a "Full Model Load" file.
-
-            # function_list = ["ABS", "ADDMONTHS", "ADDYEARS", "AGENTS", "AGENTSB", "(x\[ALL:y\]|.+\[ALL:)", "AND", "ANSWERTIME", "(x\[ANY:y\]|.+\[ANY:)", "ARRIVALRATE", "(x\[AVERAGE:y\]|.+\[AVERAGE:)", "AVGDURATION", "AVGWAIT",
-            # "BLANK", "CODE", "COLLECT", "COMPARE", "COUPDAYS", "COUPDAYSBS", "COUPDAYSNC", "COUPNCD", "COUPNUM", "COUPPCD", "CUMIPMT", "CUMPRINC", "CUMULATE", "CURRENTPERIODEND", "CURRENTPERIODSTART", "CURRENTVERSION", "DATE", "DAY",
-            # "DAYS", "DAYSINMONTH", "DAYSINYEAR", "DECUMULATE", "DIVIDE", "DURATION", "END", "ERLANG-B", "ERLANG-C", "EXP", "FIND", "FINDITEM", "FIRSTNONBLANK", "FIRSTNONZERO", "FV", "HALFYEARTODATE", "HALFYEARVALUE", "IF ISNOTBLANK",
-            # "IF ISBLANK", "IF AND", "IF NOT", "IF OR", "IF THEN ELSE", "INPERIOD", "IPMT", "IRR", "ISACTUALVERSION", "ISANCESTOR", "ISBLANK", "ISCURRENTVERSION", "ISFIRSTOCCURRENCE", "ISNOTBLANK", "ITEM", "LAG", "LASTNONBLANK", "LEAD",
-            # "LEFT", "LEN", "LENGTH", "LN", "LOG", "LOOKUP", "LOWER", "MAILTO", "MAKELINK", "MAX", "(x\[MIN:y\]|.+\[MIN:)", "MDURATION", "MID", "MIN", "(x\[MIN:y\]|.+\[MIN:)", "MOD", "MONTH", "MONTHTODATE", "MONTHVALUE", "MOVINGSUM",
-            # "MROUND", "NAME", "NEXT", "NEXTVERSION", "NOT", "NPER", "NPV", "OFFSET", "OR", "PARENT", "PERIOD", "PMT", "POST", "POWER", "PPMT", "PREVIOUS", "PREVIOUSVERSION", "PRICE", "PROFILE", "PV", "QUARTERTODATE", "QUARTERVALUE",
-            # "RANK", "RANKCUMULATE", "RATE", "RIGHT", "ROUND", "SELECT", "(SELECT.+LOOKUP|LOOKUP.+SELECT)", "SIGN", "SLA", "SPREAD", "SQRT", "START", "SUBSTITUTE", "SUM", "(SUM.+LOOKUP|LOOKUP.+SUM)", "(SUM.+SELECT|SELECT.+SUM)",
-            # "TEXT", "TEXTLIST", "TIMESUM", "TRIM", "UPPER", "VALUE", "WEEKDAY", "WEEKTODATE", "WEEKVALUE", "YEAR", "YEARFRAC", "YEARTODATE", "YEARVALUE", "YIELD"]
-
-            # function_count = {}
-
-            # for function_item in function_list:
-            #     function_count.update({function_item: 0})
-            # if int(param_field[1]) == 2:
-            #     for to_index, to_object in target_objects.items():
-            #         print("object index: " + str(to_index))
-            #         if to_object.endswith(('.tsv', '.txt')):
-            #             with open(current_path + 'Objects/' + str(param_field[6]) + '/' + str(to_object), 'r', encoding='UTF-8') as engaged_object, open(current_path + 'Search Results/' + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
-            #                 object_reader = csv.reader(
-            #                     engaged_object, delimiter='\t')
-            #                 results_writer = csv.writer(
-            #                     results, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"')
-            #                 for row in object_reader:
-            #                     for f_num, field in enumerate(row):
-            #                         for entity, field_parameter in field_parameters.items():
-            #                             if (f_num == int(field_parameter)):
-            #                                 for function_item in function_list:
-            #                                     if re.match('.*' + function_item + '.*', field):
-            #                                         function_count.update(
-            #                                             {function_item: (function_count[function_item] + 1)})
-            #                                         continue
-
-            #                                     else:
-            #                                         continue
-            #                             else:
-            #                                 continue
-            #         else:
-            #             pass
-
-            # #print(function_count)
-
-            # for key, value in function_count.items():
-            #     fc_row = []
-            #     fc_row.append(key, value)
-            #     results_writer.writerow(fc_row)
-
-
 # Execute the program. Program will hault once the last parameters record is processed.
 object_engine_main()
