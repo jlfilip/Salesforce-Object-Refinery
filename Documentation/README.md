@@ -1,4 +1,12 @@
-Big Data Engine
+Salesforce Object Refinery
+
+Use plain text, regular expressions, and an inclusionary or exclusionary method selection to refine big data sets (Salesforce Objects {.xml} or Comma Separated Values{.csv, .txt, .tsv}) into an easy to analyze CSV files for the purpose of better understanding your data. 
+
+Regular Expression support allows for deep contextual analysis of your customer or enterprise data. You can create a structural linquistic algorithm to focus in on a common speech trend for a situation, or simply look for exact phrases that indicate an interesting data point.
+
+Every entry in your data set is processed, one line at a time. If your criteria matches the record being processed, it is either included or excluded in the result data. 
+
+
 
 This tool allows you to perform ad-hoc transformation of large common format data structures quickly on your local machine.
 
