@@ -11,9 +11,11 @@ Every entry in your data set is processed, one line at a time. If your criteria 
 How to use:
 
 Step 1 
+
 Export your dataset from Salesforce and place it in a directory within the 'Salesforce Objects' directory. You can name the directory whatever you'd like, but it is useful to name it according to your use case or question that you're answering. 
 
 Step 2
+
 Build the Customer Object Field Index (COFI) file by executing 'Application/build_cofi.py'. Use the resulting output file, 'Salesforce Objects/cofi.csv', to understand the available fields and their indicies from your data set, using them to build your 'Application/parameters.csv' file.
 
     Building your parameters file:
@@ -55,29 +57,45 @@ Build the Customer Object Field Index (COFI) file by executing 'Application/buil
                 The name of the directory within the Salesforce Objects directory that contains the data sets for this job.
 
 Step 3
+
 Execute Application/salesforce_object_refinery.py.
 
 Step 4
+
 Locate and utilize the result data sets from your processing jobs in 'Refined Objects/{Use Case Name}'.
 
 ---
 
 Supported Data Structures:
+
 XML (E.g. Salesforce Objects)
+
 CSV (E.g. Salesforce Exports, Anaplan Exports, Database Exports)
+
 TSV (E.g. Salesforce Anaplan Exports, Database Exports)
+
 TXT (E.g. Salesforce Anaplan Exports, Database Exports)
 
+
 Result Data Structure:
+
 CSV
 
+
 Requirements:
+
 Python (2.7 or 3+)
 
+
 Supported Platforms:
+
 Windows
+
 Mac OS
+
 Linux
 
+
 Donate:
+
 If you find this tool useful, please consider donating: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VM5CCZSFQB59S
