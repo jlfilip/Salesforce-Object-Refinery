@@ -38,15 +38,15 @@ Build the Customer Object Field Index (COFI) file by executing 'Application/buil
 
             Selected Objects
 
-                Integer representing the file present within the target 'Salesforce Objects/{Use Case Name}' directory.
+                Integer representing the file present within the target 'Salesforce Objects/{Use Case Name}' directory. You may process multiple 'chunks' of a data set or multiple data sets that share the same structure at once by including multiple object values, separated by a hashtag '#'. (E.g. 0#1#2)
 
             Selected Field
 
-                Integer representing the desired field to match against your plain text or Regular Expression.
+                Integer representing the desired field to match against your plain text or Regular Expression. Only one value is supported.
 
             Return Fields
 
-                Pipe delimited integers representing the fields from the original data set that you would like to either return or exclude from the processed data set, depending on the selected method.
+                Pipe delimited integers representing the fields from the original data set that you would like to either return or exclude from the processed data set, depending on the selected method. (E.g. 2|3|4)
 
             Search Criteria
 
