@@ -2,21 +2,31 @@ import csv
 import re
 import xml.etree.ElementTree as ET
 import os
+import platform
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # get the path of the current directory where this file was executed and 'go up one level' to the application root directory.
+nav = ""
+
+if platform.system() == "Windows":
+    nav = "\\"
+else:
+    nav = "/"
+
 current_path = str(os.getcwd())[0:-11]
+
+print(current_path)
 
 # function to build the customer object-field index for each object within the directory.
 def build_object_field_indicies():
-    folders = next(os.walk(current_path + 'Salesforce Objects/'))[1]
+    folders = next(os.walk(current_path + 'Salesforce Objects' + nav))[1]
 
     print(folders)
 
-    with open(current_path + 'Salesforce Objects/cofi.csv', 'w+') as cofi:
+    with open(current_path + 'Salesforce Objects' + nav + 'cofi.csv', 'w+') as cofi:
         for f, directory in enumerate(folders):
             try:
-                files = os.listdir(current_path + 'Salesforce Objects/' + str(directory) + '/')
+                files = os.listdir(current_path + 'Salesforce Objects' + nav + str(directory) + nav)
                 customer_index_string = str(f)
                 file_list = []
                 file_objects = {}
@@ -39,7 +49,7 @@ def build_object_field_indicies():
 
                     if object_item.endswith(".csv"):
 
-                        with open(current_path + 'Salesforce Objects/' + str(directory) + '/' + str(file_list[object_index]), 'r') as cofi_target:
+                        with open(current_path + 'Salesforce Objects' + nav + str(directory) + nav + str(file_list[object_index]), 'r') as cofi_target:
                             cofi_reader = csv.reader(cofi_target)
                             field_items = list(next(cofi_reader))
                             cofi_target.seek(0)
@@ -97,7 +107,7 @@ def build_object_field_indicies():
                     elif object_item.endswith(".xml"):
                         #parse xml and assign indecies to fields 
 
-                        tree = ET.parse(current_path + 'Salesforce Objects/' + str(directory) + '/' + str(file_list[object_index]))
+                        tree = ET.parse(current_path + 'Salesforce Objects' + nav + str(directory) + nav + str(file_list[object_index]))
                         root = tree.getroot()
 
                         entities = {}
@@ -159,7 +169,7 @@ def build_object_field_indicies():
 
                     elif object_item.endswith((".tsv", ".txt")):
                        
-                        with open(current_path + 'Salesforce Objects/' + str(directory) + '/' + str(file_list[object_index]), 'r') as cofi_target:
+                        with open(current_path + 'Salesforce Objects' + nav + str(directory) + nav + str(file_list[object_index]), 'r') as cofi_target:
                             cofi_reader = csv.reader(cofi_target, dialect='excel', delimiter='\t')
                             field_items = list(next(cofi_reader))
                             cofi_target.seek(0)

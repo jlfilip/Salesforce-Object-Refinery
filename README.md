@@ -75,5 +75,9 @@ Requirements:
 Python (2.7 or 3+)
 
 Supported Platforms:
-UNIX / Mac OS
+Windows
+Mac OS
 Linux
+
+Donate:
+If you find this tool useful, please consider donating: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VM5CCZSFQB59S

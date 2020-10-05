@@ -1,6 +1,7 @@
 import csv
 import re
 import os
+import platform
 from datetime import datetime
 import xml.etree.ElementTree as ET
 
@@ -9,10 +10,17 @@ import xml.etree.ElementTree as ET
 # execute the process on, fields to return, and the search criteria.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # get the path of the current directory where this file was executed and 'go up one level' to the application root directory.
+nav = ""
+
+if platform.system() == "Windows":
+    nav = "\\"
+else:
+    nav = "/"
+
 current_path = str(os.getcwd())[0:-11]
 
 def salesforce_object_refinery_main():
-    with open(current_path + 'Application/parameters.csv', 'r', encoding='UTF-8') as parameters:
+    with open(current_path + 'Application' + nav + 'parameters.csv', 'r', encoding='UTF-8') as parameters:
         param_reader = csv.reader(parameters, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"')
         param_field_selections = {}
 
@@ -31,7 +39,7 @@ def salesforce_object_refinery_main():
                     object_parameters[object_string_index] = object_string.strip()
 
             # 0.1 Get a list of files in the directory defined in the current batch of the parameters file (customer), create a second list containing the file names that end in .csv with the file extention removed (objects) and a dictionary containing an index and filename.
-            files = os.listdir(current_path + 'Salesforce Objects/' + str(param_field[6]) + '/')
+            files = os.listdir(current_path + 'Salesforce Objects' + nav + str(param_field[6]) + nav)
             file_list = []
             objects = []
             file_objects = {}
@@ -79,7 +87,7 @@ def salesforce_object_refinery_main():
                 for to_index, to_object in target_objects.items():
                     if to_object.endswith(".csv"):
 
-                        with open(current_path + 'Salesforce Objects/' + str(param_field[6]) + '/' + str(to_object), 'r', encoding='UTF-8') as engaged_object, open(current_path + 'Refined Objects/' + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
+                        with open(current_path + 'Salesforce Objects' + nav + str(param_field[6]) + nav + str(to_object), 'r', encoding='UTF-8') as engaged_object, open(current_path + 'Refined Objects' + nav + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
                             filtered_object = (line.replace(
                                 '\n' or '\r', '') for line in engaged_object)
                             object_reader = csv.reader(filtered_object, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
@@ -95,7 +103,7 @@ def salesforce_object_refinery_main():
                                         rf_content_strung = ' '.join(rf_content_stripped)
                                         rf_content_remnlc = rf_content_strung.replace('(\n|,)', '')
                                         rf_content_cleaned = rf_content_remnlc.replace('  ', ' ')
-                                        row_data.update({rf_index: rf_content_cleaned})
+                                        row_data.update({rf_index: rf_content})
 
                                         for entity, field_parameter in field_parameters.items():
                                             if (int(rf_index) == int(field_parameter)):
@@ -129,10 +137,10 @@ def salesforce_object_refinery_main():
 
                     elif to_object.endswith(".xml"):
                         # parse xml and assign indecies to fields
-                        with open(current_path + 'Refined Objects/' + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
+                        with open(current_path + 'Refined Objects' + nav + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
                             results_writer = csv.writer(results, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"')
 
-                            tree = ET.parse(current_path + 'Salesforce Objects/' + str(param_field[6]) + '/' + str(to_object))
+                            tree = ET.parse(current_path + 'Salesforce Objects' + nav + str(param_field[6]) + nav + str(to_object))
                             root = tree.getroot()
 
                             #get the structure and write it as the first row of the results file
@@ -173,7 +181,7 @@ def salesforce_object_refinery_main():
                 # for each index, object in target_objects
                 for to_index, to_object in target_objects.items():
                     if to_object.endswith(".csv"):
-                        with open(current_path + 'Salesforce Objects/' + str(param_field[6]) + '/' + str(to_object), 'r', encoding='UTF-8') as engaged_object, open(current_path + 'Refined Objects/' + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
+                        with open(current_path + 'Salesforce Objects' + nav + str(param_field[6]) + nav + str(to_object), 'r', encoding='UTF-8') as engaged_object, open(current_path + 'Refined Objects' + nav + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
                             filtered_object = (line.replace('\n' or '\r', '') for line in engaged_object)
                             object_reader = csv.reader(filtered_object, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
                             results_writer = csv.writer(results, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"')
@@ -226,9 +234,9 @@ def salesforce_object_refinery_main():
 
                     elif to_object.endswith(".xml"):
                         # parse xml and assign indecies to fields
-                        with open(current_path + 'Refined Objects/' + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
+                        with open(current_path + 'Refined Objects' + nav + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
                             results_writer = csv.writer(results, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"')
-                            tree = ET.parse(current_path + 'Salesforce Objects/' + str(param_field[6]) + '/' + str(to_object))
+                            tree = ET.parse(current_path + 'Salesforce Objects' + nav + str(param_field[6]) + nav + str(to_object))
                             root = tree.getroot()
 
                             #get the structure and write it as the first row of the results file
@@ -262,7 +270,7 @@ def salesforce_object_refinery_main():
                                     results_writer.writerow(field_item_list)
 
                     elif to_object.endswith(('.tsv', '.txt')):
-                        with open(current_path + 'Salesforce Objects/' + str(param_field[6]) + '/' + str(to_object), 'r', encoding='UTF-8') as engaged_object, open(current_path + 'Refined Objects/' + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
+                        with open(current_path + 'Salesforce Objects' + nav + str(param_field[6]) + nav + str(to_object), 'r', encoding='UTF-8') as engaged_object, open(current_path + 'Refined Objects' + nav + str(param_field[6]) + '_' + str(target_objects[to_index]) + '_' + str(datetime.now()) + '.csv', "w+", encoding='UTF-8') as results:
                             object_reader = csv.reader(engaged_object, delimiter='\t')
                             results_writer = csv.writer(results, dialect='excel', skipinitialspace=True, delimiter=',', quotechar='"')
 

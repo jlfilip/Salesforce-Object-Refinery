@@ -1,3 +1,3 @@
 batch_id,selected_method,selected_objects,selected_field,return_fields,search_criteria,customer
-#6,0,0,3,1|2|3,"\b(previously entitled|previously enabled|entitled|enable|request|activate|access|re-enable|reenable|re-activate|reactivate|provision|re-provision)(?:\W+\w+){1,6}?\W+(ssbizmap|BizMap|docusign|Docusign|audit|Audit|optimizer|Optimizer|Audit|audit|business map|Business Map|workflow|Workflow|WorkFlow|Work Flow|work flow|work-flow|Work-Flow|byok|BYOK|Bring Your Own Key|bring your own key|personal saved dashboard|Personal Saved Dashboard|springboard|Springboard|SpringBoard|New UX|NUX|new ux|newux)\b",Customer Care
-#5,1,1,4,1|2|3|4,(Customer|customer),Customer Care
+0,0,0,3,1|2|3,.cn,Name of Use Case
+1,0,0,3,1|2|3|4,(theatlantic|washingtonpost),Name of Use Case
