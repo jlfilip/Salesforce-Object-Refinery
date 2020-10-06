@@ -30,7 +30,18 @@ def build_object_field_indicies():
                 customer_index_string = str(f)
                 file_list = []
                 file_objects = {}
-                #field_index = {}
+                
+                first_row = [
+                    "Use Case Index",
+                    "Use Case",
+                    "Object Index",
+                    "Object",
+                    "Field Index",
+                    "Field",
+                    "Use Case GUID",
+                    "Object GUID",
+                    "Field GUID"
+                ]
 
                 for file in files:
                     if file.endswith(".csv") or file.endswith(".xml") or file.endswith(".tsv") or file.endswith(".txt"):
@@ -44,6 +55,7 @@ def build_object_field_indicies():
                     customer_guid_zeros += "0"
 
                 cofi_writer = csv.writer(cofi, dialect='excel')
+                cofi_writer.writerow(first_row)
 
                 for object_index, object_item in enumerate(file_list):
 
