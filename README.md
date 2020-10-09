@@ -12,11 +12,11 @@ How to use:
 
 Step 1 
 
-Export your dataset from Salesforce and place it in a directory within the 'Salesforce Objects' directory. You can name the directory whatever you'd like, but it is useful to name it according to your use case or question that you're answering. 
+Export your dataset from Salesforce and place it in a directory within the 'Objects' directory. You can name the directory whatever you'd like, but it is useful to name it according to your use case or question that you're answering. 
 
 Step 2
 
-Build the Customer Object Field Index (COFI) file by executing 'Application/build_cofi.py'. Use the resulting output file, 'Salesforce Objects/cofi.csv', to understand the available fields and their indicies from your data set, using them to build your 'Application/parameters.csv' file.
+Build the Customer Object Field Index (COFI) file by executing 'Application/build_cofi.py'. Use the resulting output file, 'Objects/cofi.csv', to understand the available fields and their indicies from your data set, using them to build your 'Application/parameters.csv' file.
 
     Building your parameters file:
 
@@ -38,7 +38,7 @@ Build the Customer Object Field Index (COFI) file by executing 'Application/buil
 
             Selected Objects
 
-                Integer representing the file present within the target 'Salesforce Objects/{Use Case Name}' directory. You may process multiple 'chunks' of a data set or multiple data sets that share the same structure at once by including multiple object values, separated by a hashtag '#'. (E.g. 0#1#2)
+                Integer representing the file present within the target 'Objects/{Use Case Name}' directory. You may process multiple 'chunks' of a data set or multiple data sets that share the same structure at once by including multiple object values, separated by a hashtag '#'. (E.g. 0#1#2)
 
             Selected Field
 
@@ -54,7 +54,7 @@ Build the Customer Object Field Index (COFI) file by executing 'Application/buil
 
             Customer
 
-                The name of the directory within the Salesforce Objects directory that contains the data sets for this job.
+                The name of the directory within the Objects directory that contains the data sets for this job.
 
 Step 3
 
@@ -62,7 +62,7 @@ Execute Application/salesforce_object_refinery.py.
 
 Step 4
 
-Locate and utilize the result data sets from your processing jobs in 'Salesforce Objects/Refined Objects/{Use Case Name}'.
+Locate and utilize the result data sets from your processing jobs in 'Objects/Refined Objects/{Use Case Name}'.
 
 ---
 
