@@ -62,7 +62,7 @@ Execute Application/salesforce_object_refinery.py.
 
 Step 4
 
-Locate and utilize the result data sets from your processing jobs in 'Refined Objects/{Use Case Name}'.
+Locate and utilize the result data sets from your processing jobs in 'Salesforce Objects/Refined Objects/{Use Case Name}'.
 
 ---
 
